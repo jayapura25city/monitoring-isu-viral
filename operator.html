@@ -2,9 +2,8 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>OPERATOR | Monitoring Isu Viral</title>
+<title>OPERATOR LOGIN</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <script src="https://cdn.tailwindcss.com"></script>
 
 <style>
@@ -14,24 +13,50 @@ body{background:#000}
 </style>
 </head>
 
-<body class="min-h-screen p-6 text-gray-200">
+<body class="min-h-screen flex items-center justify-center text-gray-200">
 
-<div class="max-w-6xl mx-auto gold-border rounded-xl p-6">
+<!-- LOGIN -->
+<div id="loginBox" class="w-full max-w-sm gold-border rounded-xl p-6">
 
-<h1 class="text-2xl gold font-black mb-4">PANEL OPERATOR</h1>
+<h1 class="gold text-xl font-black mb-4 text-center">
+LOGIN OPERATOR
+</h1>
 
-<table class="w-full text-sm border gold-border">
-<thead class="bg-[#111]">
-<tr class="gold">
+<input id="user" type="text" placeholder="Username"
+class="w-full p-3 mb-3 bg-black gold-border rounded">
+
+<input id="pass" type="password" placeholder="Password"
+class="w-full p-3 mb-4 bg-black gold-border rounded">
+
+<button onclick="login()"
+class="w-full py-3 bg-yellow-500 text-black font-bold rounded">
+MASUK
+</button>
+
+<p id="err" class="text-red-500 text-sm mt-3 hidden">
+Username atau password salah
+</p>
+
+</div>
+
+<!-- PANEL -->
+<div id="panel" class="hidden w-full p-6">
+
+<h1 class="gold text-2xl font-black mb-4">
+PANEL OPERATOR
+</h1>
+
+<table class="w-full border gold-border text-sm">
+<thead>
+<tr class="gold bg-[#111]">
 <th class="p-2 border gold-border">Waktu</th>
-<th class="p-2 border gold-border">Link Viral</th>
+<th class="p-2 border gold-border">Link</th>
 <th class="p-2 border gold-border">Keterangan</th>
 </tr>
 </thead>
-
-<tbody id="data" class="bg-black">
+<tbody id="data">
 <tr>
-<td colspan="3" class="text-center p-4 italic text-gray-400">
+<td colspan="3" class="p-4 text-center italic text-gray-400">
 Memuat data...
 </td>
 </tr>
@@ -43,40 +68,52 @@ Memuat data...
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbwwxpF_1jJqImO8Nz4tBwd8gnsVyggGgHajn5rb3yE_0P5kB2YhOYiGaA12TZ5M1dBCWQ/exec";
 
-fetch(API_URL)
-.then(res => res.json())
-.then(data => {
-  const tbody = document.getElementById("data");
-  tbody.innerHTML = "";
+// LOGIN STATIS (AMAN UNTUK INTERNAL)
+const OPERATOR = {
+  user: "operator",
+  pass: "12345"
+};
 
-  if(data.length === 0){
-    tbody.innerHTML = `
+function login(){
+  const u = user.value;
+  const p = pass.value;
+
+  if(u === OPERATOR.user && p === OPERATOR.pass){
+    loginBox.classList.add("hidden");
+    panel.classList.remove("hidden");
+    loadData();
+  } else {
+    err.classList.remove("hidden");
+  }
+}
+
+function loadData(){
+  fetch(API_URL)
+  .then(res => res.json())
+  .then(data => {
+    const tbody = document.getElementById("data");
+    tbody.innerHTML = "";
+
+    if(data.length === 0){
+      tbody.innerHTML = `
       <tr>
-        <td colspan="3" class="p-4 text-center italic text-gray-400">
+        <td colspan="3" class="p-4 text-center italic">
           Belum ada data
         </td>
       </tr>`;
-    return;
-  }
+      return;
+    }
 
-  data.reverse().forEach(d => {
-    tbody.innerHTML += `
+    data.reverse().forEach(d=>{
+      tbody.innerHTML += `
       <tr class="border-t gold-border">
         <td class="p-2">${new Date(d.waktu).toLocaleString("id-ID")}</td>
         <td class="p-2 text-blue-400 break-all">${d.link}</td>
         <td class="p-2">${d.keterangan || "-"}</td>
-      </tr>
-    `;
+      </tr>`;
+    });
   });
-})
-.catch(() => {
-  document.getElementById("data").innerHTML = `
-    <tr>
-      <td colspan="3" class="p-4 text-center text-red-500">
-        Gagal memuat data
-      </td>
-    </tr>`;
-});
+}
 </script>
 
 </body>
