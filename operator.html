@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Dashboard Operator | Monitoring Isu Viral</title>
+<title>OPERATOR | Monitoring Isu Viral</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <script src="https://cdn.tailwindcss.com"></script>
@@ -11,40 +11,32 @@
 body{background:#000}
 .gold{color:#d4af37}
 .gold-border{border:1px solid #d4af37}
-.card{background:#0f0f0f}
 </style>
 </head>
 
 <body class="min-h-screen p-6 text-gray-200">
 
-<div class="max-w-6xl mx-auto gold-border card rounded-2xl">
+<div class="max-w-6xl mx-auto gold-border rounded-xl p-6">
 
-<div class="p-6 border-b gold-border flex items-center gap-4">
-  <img src="logo%20instansi.png" class="w-10 h-10">
-  <div>
-    <div class="gold font-black text-lg">POLDA PAPUA</div>
-    <div class="text-xs text-gray-400">DASHBOARD OPERATOR</div>
-  </div>
-</div>
+<h1 class="text-2xl gold font-black mb-4">PANEL OPERATOR</h1>
 
-<div class="p-6 overflow-x-auto">
-<table class="w-full text-sm border-collapse">
-<thead class="gold-border border-b">
+<table class="w-full text-sm border gold-border">
+<thead class="bg-[#111]">
 <tr class="gold">
-  <th class="p-2 text-left">Waktu</th>
-  <th class="p-2 text-left">Link</th>
-  <th class="p-2 text-left">Keterangan</th>
-  <th class="p-2 text-left">Sumber</th>
-  <th class="p-2 text-left">Status</th>
+<th class="p-2 border gold-border">Waktu</th>
+<th class="p-2 border gold-border">Link Viral</th>
+<th class="p-2 border gold-border">Keterangan</th>
 </tr>
 </thead>
-<tbody id="tabel">
+
+<tbody id="data" class="bg-black">
 <tr>
-  <td colspan="5" class="p-4 italic text-gray-400">Memuat data...</td>
+<td colspan="3" class="text-center p-4 italic text-gray-400">
+Memuat data...
+</td>
 </tr>
 </tbody>
 </table>
-</div>
 
 </div>
 
@@ -52,32 +44,39 @@ body{background:#000}
 const API_URL = "https://script.google.com/macros/s/AKfycbz5bBODGp-9rqXVc7wBUWOpUiXNpNB8JJPNe4vBJqZvb3UAbZ3Al4V2_3lr9Se1Hw_wQw/exec";
 
 fetch(API_URL)
-  .then(res => res.json())
-  .then(data => {
-    const tbody = document.getElementById("tabel");
-    tbody.innerHTML = "";
+.then(res => res.json())
+.then(data => {
+  const tbody = document.getElementById("data");
+  tbody.innerHTML = "";
 
-    if(data.length === 0){
-      tbody.innerHTML =
-        `<tr><td colspan="5" class="p-4 italic text-gray-400">Belum ada data</td></tr>`;
-      return;
-    }
+  if(data.length === 0){
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="3" class="p-4 text-center italic text-gray-400">
+          Belum ada data
+        </td>
+      </tr>`;
+    return;
+  }
 
-    data.reverse().forEach(d => {
-      tbody.innerHTML += `
-      <tr class="border-b border-gray-800">
+  data.reverse().forEach(d => {
+    tbody.innerHTML += `
+      <tr class="border-t gold-border">
         <td class="p-2">${new Date(d.waktu).toLocaleString("id-ID")}</td>
         <td class="p-2 text-blue-400 break-all">${d.link}</td>
-        <td class="p-2">${d.keterangan}</td>
-        <td class="p-2">${d.sumber}</td>
-        <td class="p-2">${d.status}</td>
-      </tr>`;
-    });
-  })
-  .catch(() => {
-    document.getElementById("tabel").innerHTML =
-      `<tr><td colspan="5" class="p-4 text-red-500">Gagal memuat data</td></tr>`;
+        <td class="p-2">${d.keterangan || "-"}</td>
+      </tr>
+    `;
   });
+})
+.catch(() => {
+  document.getElementById("data").innerHTML = `
+    <tr>
+      <td colspan="3" class="p-4 text-center text-red-500">
+        Gagal memuat data
+      </td>
+    </tr>`;
+});
 </script>
 
 </body>
