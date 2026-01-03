@@ -70,68 +70,7 @@ Belum ada data.
 </div>
 
 <script>
-let data = {};
-
-function scan(){
-  const teks = input.value.trim();
-
-  if(!teks){
-    alert("Masukkan link viral terlebih dahulu");
-    return;
-  }
-
-  data = {};
-  const regex = /\b((https?:\/\/)?(www\.)?([a-z0-9-]+\.)+[a-z]{2,})(\/[^\s]*)?/gi;
-
-  (teks.match(regex) || []).forEach(l=>{
-    let c = l.toLowerCase()
-      .replace(/^https?:\/\//,'')
-      .replace(/^www\./,'')
-      .replace(/[.,;!?]+$/,'');
-    let d = c.split('/')[0];
-    if(!data[d]) data[d] = new Set();
-    data[d].add(c);
-  });
-
-  let h = "";
-  Object.keys(data).forEach(d=>{
-    h += `<div class="mb-4">
-      <div class="gold font-bold">Jumlah ${d} : ${data[d].size}</div>
-      <ol class="list-decimal ml-6">`;
-    data[d].forEach(x=>h+=`<li>${x}</li>`);
-    h += `</ol></div>`;
-  });
-
-  hasil.innerHTML = h;
-}
-
-function pdf(){
-  const {jsPDF} = window.jspdf;
-  const doc = new jsPDF();
-  let y = 15;
-
-  doc.setFontSize(14);
-  doc.text("LAPORAN MONITORING ISU VIRAL",105,y,{align:"center"});
-  y += 10;
-
-  doc.setFontSize(10);
-  doc.text("Tanggal : " + new Date().toLocaleDateString("id-ID"),14,y);
-  y += 10;
-
-  Object.keys(data).forEach(d=>{
-    doc.text(`Jumlah ${d} : ${data[d].size}`,14,y);
-    y += 6;
-    data[d].forEach(l=>{
-      doc.text("- " + l,18,y);
-      y += 5;
-    });
-    y += 4;
-  });
-
-  doc.save("Laporan_Monitoring_Isu_Viral.pdf");
-}
-<script>
-const API_URL = "PASTE_URL_APPS_SCRIPT_DI_SINI";
+const API_URL = "https://script.google.com/macros/s/AKfycbz5bBODGp-9rqXVc7wBUWOpUiXNpNB8JJPNe4vBJqZvb3UAbZ3Al4V2_3lr9Se1Hw_wQw/exec";
 
 function kirim(){
   const link = document.getElementById("link").value;
@@ -149,17 +88,21 @@ function kirim(){
     },
     body: `link=${encodeURIComponent(link)}&keterangan=${encodeURIComponent(ket)}`
   })
-  .then(r => r.text())
+  .then(res => res.text())
   .then(() => {
-    alert("Data terkirim");
+    alert("Data BERHASIL dikirim");
     document.getElementById("link").value = "";
     document.getElementById("ket").value = "";
   })
-  .catch(() => alert("Gagal kirim"));
+  .catch(() => {
+    alert("Gagal mengirim data");
+  });
 }
 </script>
 
 
+
 </body>
 </html>
+
 
