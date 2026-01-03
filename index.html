@@ -130,7 +130,36 @@ function pdf(){
 
   doc.save("Laporan_Monitoring_Isu_Viral.pdf");
 }
+<script>
+const API_URL = "PASTE_URL_APPS_SCRIPT_DI_SINI";
+
+function kirim(){
+  const link = document.getElementById("link").value;
+  const ket = document.getElementById("ket").value;
+
+  if(!link){
+    alert("Link wajib diisi");
+    return;
+  }
+
+  fetch(API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: `link=${encodeURIComponent(link)}&keterangan=${encodeURIComponent(ket)}`
+  })
+  .then(r => r.text())
+  .then(() => {
+    alert("Data terkirim");
+    document.getElementById("link").value = "";
+    document.getElementById("ket").value = "";
+  })
+  .catch(() => alert("Gagal kirim"));
+}
 </script>
+
 
 </body>
 </html>
+
