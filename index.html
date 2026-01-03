@@ -6,7 +6,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
 body{
@@ -42,29 +41,22 @@ body{
 <label class="text-xs gold font-bold">TEMPEL LINK VIRAL</label>
 <textarea id="input" rows="6"
 class="w-full mt-1 p-3 bg-black gold-border rounded-xl font-mono text-sm"
-placeholder="Tempel semua link viral di sini..."></textarea>
+placeholder="Satu atau banyak link, pisahkan dengan enter"></textarea>
 </div>
 
-<button onclick="scan()"
+<button onclick="kirim()"
 class="w-full mt-2 py-4 rounded-xl bg-gradient-to-r from-yellow-700 to-yellow-500 text-black font-black tracking-widest">
-SCAN & REKAP DATA
+KIRIM KE DATABASE
 </button>
 
 </div>
 
 <!-- HASIL -->
 <div class="p-6 border-t gold-border">
-<div class="flex justify-between items-center mb-3">
-  <div class="gold font-black text-lg">HASIL REKAPITULASI</div>
-  <button onclick="pdf()"
-  class="bg-red-700 px-4 py-2 rounded text-xs font-bold">
-  UNDUH PDF
-  </button>
-</div>
-
-<div id="hasil" class="text-sm text-gray-300 italic">
-Belum ada data.
-</div>
+  <div class="gold font-black text-lg mb-2">STATUS</div>
+  <div id="hasil" class="text-sm italic text-gray-400">
+    Belum ada pengiriman.
+  </div>
 </div>
 
 </div>
@@ -73,36 +65,34 @@ Belum ada data.
 const API_URL = "https://script.google.com/macros/s/AKfycbz5bBODGp-9rqXVc7wBUWOpUiXNpNB8JJPNe4vBJqZvb3UAbZ3Al4V2_3lr9Se1Hw_wQw/exec";
 
 function kirim(){
-  const link = document.getElementById("link").value;
-  const ket = document.getElementById("ket").value;
-
-  if(!link){
-    alert("Link wajib diisi");
+  const teks = document.getElementById("input").value.trim();
+  if(!teks){
+    alert("Link belum diisi");
     return;
   }
 
-  fetch(API_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded"
-    },
-    body: `link=${encodeURIComponent(link)}&keterangan=${encodeURIComponent(ket)}`
-  })
-  .then(res => res.text())
-  .then(() => {
-    alert("Data BERHASIL dikirim");
-    document.getElementById("link").value = "";
-    document.getElementById("ket").value = "";
-  })
-  .catch(() => {
-    alert("Gagal mengirim data");
+  const links = teks.split(/\n+/);
+  let sukses = 0;
+
+  links.forEach(link => {
+    if(link.trim()){
+      fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: `link=${encodeURIComponent(link.trim())}&keterangan=Input dari website`
+      })
+      .then(() => sukses++);
+    }
   });
+
+  document.getElementById("hasil").innerHTML =
+    "Pengiriman diproses. Jumlah link: <b>" + links.length + "</b>";
+
+  document.getElementById("input").value = "";
 }
 </script>
 
-
-
 </body>
 </html>
-
-
