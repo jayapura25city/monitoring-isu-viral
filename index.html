@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Monitoring Isu Viral | Web Online</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+body{
+  background: radial-gradient(circle at top,#111,#000);
+}
+.gold{color:#d4af37}
+.gold-border{border:1px solid #d4af37}
+.card{background:#0f0f0f}
+</style>
+</head>
+
+<body class="min-h-screen flex justify-center p-6 text-gray-200">
+
+<div class="w-full max-w-4xl rounded-2xl shadow-2xl gold-border card">
+
+<!-- HEADER -->
+<div class="flex items-center gap-4 p-6 border-b gold-border">
+  <img src="logo%20instansi.png" class="w-10 h-10 object-contain">
+  <div>
+    <div class="gold font-black text-lg">POLDA PAPUA</div>
+    <div class="text-xs tracking-widest text-gray-400">MONITORING MEDIA ONLINE</div>
+  </div>
+  <div class="ml-auto text-right">
+    <div class="text-2xl font-black gold">MONITORING ISU VIRAL</div>
+    <div class="text-xs text-gray-400">WEB ONLINE SYSTEM</div>
+  </div>
+</div>
+
+<!-- FORM -->
+<div class="p-6 space-y-4">
+
+<div>
+<label class="text-xs gold font-bold">TEMPEL LINK VIRAL</label>
+<textarea id="input" rows="6"
+class="w-full mt-1 p-3 bg-black gold-border rounded-xl font-mono text-sm"
+placeholder="Tempel semua link viral di sini..."></textarea>
+</div>
+
+<button onclick="scan()"
+class="w-full mt-2 py-4 rounded-xl bg-gradient-to-r from-yellow-700 to-yellow-500 text-black font-black tracking-widest">
+SCAN & REKAP DATA
+</button>
+
+</div>
+
+<!-- HASIL -->
+<div class="p-6 border-t gold-border">
+<div class="flex justify-between items-center mb-3">
+  <div class="gold font-black text-lg">HASIL REKAPITULASI</div>
+  <button onclick="pdf()"
+  class="bg-red-700 px-4 py-2 rounded text-xs font-bold">
+  UNDUH PDF
+  </button>
+</div>
+
+<div id="hasil" class="text-sm text-gray-300 italic">
+Belum ada data.
+</div>
+</div>
+
+</div>
+
+<script>
+let data = {};
+
+function scan(){
+  const teks = input.value.trim();
+
+  if(!teks){
+    alert("Masukkan link viral terlebih dahulu");
+    return;
+  }
+
+  data = {};
+  const regex = /\b((https?:\/\/)?(www\.)?([a-z0-9-]+\.)+[a-z]{2,})(\/[^\s]*)?/gi;
+
+  (teks.match(regex) || []).forEach(l=>{
+    let c = l.toLowerCase()
+      .replace(/^https?:\/\//,'')
+      .replace(/^www\./,'')
+      .replace(/[.,;!?]+$/,'');
+    let d = c.split('/')[0];
+    if(!data[d]) data[d] = new Set();
+    data[d].add(c);
+  });
+
+  let h = "";
+  Object.keys(data).forEach(d=>{
+    h += `<div class="mb-4">
+      <div class="gold font-bold">Jumlah ${d} : ${data[d].size}</div>
+      <ol class="list-decimal ml-6">`;
+    data[d].forEach(x=>h+=`<li>${x}</li>`);
+    h += `</ol></div>`;
+  });
+
+  hasil.innerHTML = h;
+}
+
+function pdf(){
+  const {jsPDF} = window.jspdf;
+  const doc = new jsPDF();
+  let y = 15;
+
+  doc.setFontSize(14);
+  doc.text("LAPORAN MONITORING ISU VIRAL",105,y,{align:"center"});
+  y += 10;
+
+  doc.setFontSize(10);
+  doc.text("Tanggal : " + new Date().toLocaleDateString("id-ID"),14,y);
+  y += 10;
+
+  Object.keys(data).forEach(d=>{
+    doc.text(`Jumlah ${d} : ${data[d].size}`,14,y);
+    y += 6;
+    data[d].forEach(l=>{
+      doc.text("- " + l,18,y);
+      y += 5;
+    });
+    y += 4;
+  });
+
+  doc.save("Laporan_Monitoring_Isu_Viral.pdf");
+}
+</script>
+
+</body>
+</html>

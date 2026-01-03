@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Dashboard Operator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-black text-gray-200 p-6">
+
+<h1 class="text-2xl font-bold text-yellow-400 mb-4">
+Dashboard Operator – Monitoring Isu Viral
+</h1>
+
+<table class="w-full text-sm border border-yellow-500">
+<thead class="bg-yellow-600 text-black">
+<tr>
+<th class="p-2">Waktu</th>
+<th class="p-2">Link</th>
+<th class="p-2">Keterangan</th>
+<th class="p-2">Sumber</th>
+<th class="p-2">Status</th>
+</tr>
+</thead>
+<tbody id="data"></tbody>
+</table>
+
+<script>
+fetch("https://script.google.com/macros/s/AKfycbxR13GP_qedrSMdqUacNuinJEhmrv_Bf0YnxebvjvqgjxtssulVaDt2hVzdtqT7ThdqzQ/exec")
+.then(r => r.json())
+.then(d => {
+  let h="";
+  d.reverse().forEach(x=>{
+    h+=`<tr class="border-t border-yellow-500">
+      <td class="p-2">${new Date(x.timestamp).toLocaleString("id-ID")}</td>
+      <td class="p-2 text-blue-400">${x.link}</td>
+      <td class="p-2">${x.keterangan}</td>
+      <td class="p-2">${x.sumber}</td>
+      <td class="p-2 font-bold">${x.status}</td>
+    </tr>`;
+  });
+  document.getElementById("data").innerHTML=h;
+});
+</script>
+
+</body>
+</html>
